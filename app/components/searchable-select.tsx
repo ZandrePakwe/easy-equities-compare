@@ -46,6 +46,17 @@ export default function SearchableSelect({
         className="w-full rounded-md border border-zinc-300 px-3 py-2 placeholder:text-zinc-400"
       />
       {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+      {open && isLoading && (
+        <div className="absolute z-10 mt-1 flex w-full items-center justify-center rounded-md border border-zinc-200 bg-white py-4 shadow-lg">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600" />
+          <span className="ml-2 text-sm text-zinc-500">Loading...</span>
+        </div>
+      )}
+      {open && !isLoading && options.length === 0 && query.length > 0 && (
+        <div className="absolute z-10 mt-1 w-full rounded-md border border-zinc-200 bg-white py-4 text-center text-sm text-zinc-500 shadow-lg">
+          No results found
+        </div>
+      )}
       {open && !isLoading && options.length > 0 && (
         <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-zinc-200 bg-white shadow-lg">
           {options.map((option) => (
