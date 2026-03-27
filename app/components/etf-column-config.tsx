@@ -28,7 +28,7 @@ export const COLUMN_CONFIG: {
   {
     key: "fundSize",
     label: "Fund Size",
-    format: (v) => `${String(v).toLocaleString()}`,
+    format: (v) => `${String(v)}`,
   },
   { key: "performanceYtd", label: "YTD", format: formatPerformancePercentage },
   {

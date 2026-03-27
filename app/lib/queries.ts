@@ -12,14 +12,6 @@ export function useEtfOptions(query?: string) {
   });
 }
 
-export function useEtfDetails(isin?: string) {
-  return useQuery({
-    queryKey: ["etf-details", isin],
-    queryFn: () => getEtfDetails(isin!),
-    enabled: !!isin,
-  });
-}
-
 export function useMultipleEtfDetails(isins: string[]) {
   return useQueries({
     queries: isins.map((isin) => ({

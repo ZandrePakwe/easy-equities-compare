@@ -26,12 +26,38 @@ export default function EtfDetailsPreview() {
                 </th>
               </tr>
             </thead>
-            <Suspense>
+            <Suspense
+              fallback={
+                <tbody>
+                  {Array.from({ length: 3 }, (_, i) => (
+                    <tr key={i} className="border-b border-zinc-100">
+                      <td className="px-4 py-2">
+                        <div className="h-4 w-32 animate-pulse rounded bg-zinc-200" />
+                      </td>
+                      {COLUMN_CONFIG.map((col) => (
+                        <td key={col.key} className="px-4 py-2">
+                          <div className="h-4 w-16 animate-pulse rounded bg-zinc-200" />
+                        </td>
+                      ))}
+                      <td className="px-4 py-2">
+                        <div className="h-4 w-24 animate-pulse rounded bg-zinc-200" />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              }
+            >
               <EtfDetailsBody />
             </Suspense>
           </table>
         </div>
-        <Suspense>
+        <Suspense
+          fallback={
+            <div className="border-t border-zinc-200 px-4 py-2">
+              <div className="h-9 w-80 animate-pulse rounded bg-zinc-200" />
+            </div>
+          }
+        >
           <EtfDetailsFooter />
         </Suspense>
       </div>
