@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useScrolled } from "./lib/use-scrolled";
 
 const navLinks = [
@@ -19,7 +20,12 @@ const MAIN_LOGO =
 
 export default function Header() {
   const scrolled = useScrolled();
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   return (
     <header
@@ -69,12 +75,16 @@ export default function Header() {
         </button>
       </div>
       {mobileOpen && (
+        <>
+        <div
+          className="fixed inset-0 z-[-1] sm:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
         <nav className="flex flex-col gap-2 px-4 pb-4 sm:hidden">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              onClick={() => setMobileOpen(false)}
               className={`text-sm font-medium transition-colors ${
                 scrolled
                   ? "text-gray-600 hover:text-gray-900"
@@ -85,6 +95,7 @@ export default function Header() {
             </Link>
           ))}
         </nav>
+        </>
       )}
     </header>
   );
