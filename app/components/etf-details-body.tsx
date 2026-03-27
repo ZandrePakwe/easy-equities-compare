@@ -72,7 +72,7 @@ export default function EtfDetailsBody() {
         }
         return (
           <tr key={isin} className="border-b border-zinc-100">
-            <td className="sticky left-0 max-w-50 bg-white px-4 py-2 font-semibold wrap-break-word whitespace-normal text-zinc-800">
+            <td className="sticky left-0 max-w-[25vw] bg-white px-4 py-2 font-semibold wrap-break-word whitespace-normal text-zinc-800 sm:max-w-50">
               <div className="flex items-start gap-1">
                 <span className="flex-1">{r.data.fundName}</span>
                 <button
