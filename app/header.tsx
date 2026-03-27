@@ -7,10 +7,10 @@ import { usePathname } from "next/navigation";
 import { useScrolled } from "./lib/use-scrolled";
 
 const navLinks = [
-  { label: "ETF Finder", href: "/finder" },
-  { label: "Compare ETFs", href: "/compare" },
-  { label: "Learn", href: "/learn" },
-  { label: "ETF News", href: "/news" },
+  { label: "ETF Finder", href: "https://compare.easyequities.co.za/finder" },
+  { label: "Compare ETFs", href: "/" },
+  { label: "Learn", href: "https://compare.easyequities.co.za/learn" },
+  { label: "ETF News", href: "https://compare.easyequities.co.za/news" },
 ];
 
 const WHITE_LOGO =
