@@ -64,7 +64,6 @@ export default function SearchableSelect({
               key={option.value}
               onClick={() => {
                 onChange?.(option);
-                setQuery("");
                 setOpen(false);
               }}
               className="cursor-pointer px-3 py-2 hover:bg-zinc-100"
