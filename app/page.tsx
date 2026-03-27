@@ -1,10 +1,8 @@
-import Header from "./header";
 import EtfDetailsPreview from "./components/etf-details-preview";
 
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col">
-      <Header />
       <div
         className="flex flex-col items-center justify-center bg-cover bg-center px-4 py-10 text-center sm:py-16"
         style={{
