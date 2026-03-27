@@ -65,15 +65,23 @@ export const COLUMN_CONFIG: {
   {
     key: "factSheetUrl",
     label: "Fact Sheet",
-    format: (v) => (
-      <a
-        href={String(v)}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-600 underline hover:text-blue-800"
-      >
-        View PDF
-      </a>
-    ),
+    format: (v) => {
+      try {
+        const url = new URL(String(v));
+        if (url.protocol !== "https:" && url.protocol !== "http:") return "-";
+        return (
+          <a
+            href={url.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline hover:text-blue-800"
+          >
+            View PDF
+          </a>
+        );
+      } catch {
+        return "-";
+      }
+    },
   },
 ];
