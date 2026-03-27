@@ -48,7 +48,7 @@ export default function EtfDetailsBody() {
         if (!r?.data) {
           return (
             <tr key={isin} className="border-b border-zinc-100">
-              <td className="sticky left-0 bg-white px-4 py-2">
+              <td className="sticky left-0 z-10 bg-white px-4 py-2">
                 <div className="flex items-start gap-1">
                   <div className="h-4 w-32 animate-pulse rounded bg-zinc-200" />
                   <button
@@ -107,7 +107,7 @@ export function EtfDetailsFooter() {
 
   return (
     <div className="border-t border-zinc-200 px-4 py-2">
-      <div className="w-80">
+      <div className="w-full max-w-80">
         <EtfSelect onChange={handleSelect} excludeIsins={isins} />
       </div>
     </div>

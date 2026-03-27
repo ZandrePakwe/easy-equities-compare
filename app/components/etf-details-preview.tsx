@@ -4,10 +4,11 @@ import EtfDetailsBody, { EtfDetailsFooter } from "@/app/components/etf-details-b
 
 export default function EtfDetailsPreview() {
   return (
-    <div className="flex w-full max-w-5xl flex-col gap-4">
+    <div className="flex w-full max-w-5xl flex-col gap-4 px-4 sm:px-0">
       <div className="rounded-lg border border-zinc-200 shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-max text-left text-sm whitespace-nowrap">
+        <div className="relative">
+          <div className="overflow-x-auto">
+            <table className="w-max text-left text-sm whitespace-nowrap">
             <thead>
               <tr className="border-b border-zinc-200 bg-zinc-50">
                 <th className="sticky top-0 bg-zinc-50 px-4 py-2 font-semibold text-zinc-800">
@@ -31,7 +32,7 @@ export default function EtfDetailsPreview() {
                 <tbody>
                   {Array.from({ length: 3 }, (_, i) => (
                     <tr key={i} className="border-b border-zinc-100">
-                      <td className="px-4 py-2">
+                      <td className="sticky left-0 bg-white px-4 py-2">
                         <div className="h-4 w-32 animate-pulse rounded bg-zinc-200" />
                       </td>
                       {COLUMN_CONFIG.map((col) => (
@@ -50,11 +51,13 @@ export default function EtfDetailsPreview() {
               <EtfDetailsBody />
             </Suspense>
           </table>
+          </div>
+          <div className="pointer-events-none absolute right-0 top-0 h-full w-6 bg-linear-to-l from-white to-transparent sm:hidden" />
         </div>
         <Suspense
           fallback={
             <div className="border-t border-zinc-200 px-4 py-2">
-              <div className="h-9 w-80 animate-pulse rounded bg-zinc-200" />
+              <div className="h-9 w-full max-w-80 animate-pulse rounded bg-zinc-200" />
             </div>
           }
         >

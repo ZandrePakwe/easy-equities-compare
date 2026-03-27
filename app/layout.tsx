@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "EasyCompare",
   description: "Compare ETFs side by side",
+  icons: {
+    icon: { url: "/favicon-32x32.webp", type: "image/webp", sizes: "32x32" },
+  },
 };
 
 export default function RootLayout({
