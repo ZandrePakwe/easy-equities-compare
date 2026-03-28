@@ -15,7 +15,10 @@ function ExpandableDescription({ text }: { text: string }) {
   const [expanded, setExpanded] = useState(false);
   const words = text.split(/\s+/);
   const needsTruncation = words.length > WORD_LIMIT;
-  const display = expanded || !needsTruncation ? text : words.slice(0, WORD_LIMIT).join(" ") + "…";
+  const display =
+    expanded || !needsTruncation
+      ? text
+      : words.slice(0, WORD_LIMIT).join(" ") + "…";
 
   return (
     <td className="max-w-50 px-4 py-2 wrap-break-word whitespace-normal text-zinc-700">
@@ -42,7 +45,9 @@ export default function EtfDetailsBody() {
       {results.some((r) => r.isError) && (
         <tr>
           <td colSpan={COLUMN_CONFIG.length + 2} className="px-4 py-2">
-            <p className="text-sm text-red-500">Failed to load some ETF details.</p>
+            <p className="text-sm text-red-500">
+              Failed to load some ETF details.
+            </p>
           </td>
         </tr>
       )}
@@ -56,7 +61,7 @@ export default function EtfDetailsBody() {
                   <div className="h-4 w-32 animate-pulse rounded bg-zinc-200" />
                   <button
                     onClick={() => updateIsins(isins.filter((v) => v !== isin))}
-                    className="shrink-0 text-zinc-400 hover:text-zinc-700"
+                    className="shrink-0 rounded-full bg-zinc-100 p-2 text-sm leading-none text-zinc-400 hover:text-zinc-700 sm:bg-transparent sm:hover:bg-zinc-100"
                   >
                     &times;
                   </button>
@@ -78,19 +83,30 @@ export default function EtfDetailsBody() {
             <td className="sticky left-0 max-w-[25vw] bg-white px-4 py-2 font-semibold wrap-break-word whitespace-normal text-zinc-800 sm:max-w-50">
               <div className="flex items-start gap-2">
                 <span className="flex-1">{r.data.fundName}</span>
-                <div className="flex shrink-0 flex-col items-center gap-1 sm:flex-row sm:gap-2">
+                <div className="flex shrink-0 flex-col-reverse items-center gap-1 sm:flex-row sm:gap-2">
                   <button
-                    onClick={() => chartRef.current?.open(isin, r.data.fundName)}
-                    className="p-1.5 -m-1.5 text-zinc-400 hover:text-accent"
+                    onClick={() =>
+                      chartRef.current?.open(isin, r.data.fundName)
+                    }
+                    className="hover:text-accent rounded-full bg-zinc-100 p-2 text-zinc-400 sm:bg-transparent sm:hover:bg-zinc-100"
                     aria-label="View price trend"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
-                      <path fillRule="evenodd" d="M1 2.75A.75.75 0 0 1 1.75 2h16.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75ZM1 8.75A.75.75 0 0 1 1.75 8h16.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 8.75Zm12 6a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Zm-8 0a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Z" clipRule="evenodd" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="size-4"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M1 2.75A.75.75 0 0 1 1.75 2h16.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75ZM1 8.75A.75.75 0 0 1 1.75 8h16.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 8.75Zm12 6a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Zm-8 0a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </button>
                   <button
                     onClick={() => updateIsins(isins.filter((v) => v !== isin))}
-                    className="p-1.5 -m-1.5 text-lg text-zinc-400 hover:text-zinc-700"
+                    className="rounded-full bg-zinc-100 p-2 text-sm leading-none text-zinc-400 hover:text-zinc-700 sm:bg-transparent sm:hover:bg-zinc-100"
                   >
                     &times;
                   </button>

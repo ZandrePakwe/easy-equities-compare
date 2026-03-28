@@ -89,7 +89,7 @@ const PriceChartDialog = forwardRef<PriceChartDialogHandle>(
             </h2>
             <button
               onClick={close}
-              className="text-xl text-zinc-400 hover:text-zinc-700"
+              className="rounded-full bg-zinc-100 p-2 text-sm leading-none text-zinc-400 sm:bg-transparent sm:hover:bg-zinc-100 hover:text-zinc-700"
             >
               &times;
             </button>
