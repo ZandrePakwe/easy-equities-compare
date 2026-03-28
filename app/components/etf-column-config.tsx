@@ -4,6 +4,7 @@ import type { EtfDetails } from "@/app/lib/queries";
 function formatPerformancePercentage(v: EtfDetails[keyof EtfDetails]) {
   if (v == null) return "-";
   const n = Number(v);
+  if (Number.isNaN(n)) return "-";
   const color = n > 0 ? "text-accent" : n < 0 ? "text-danger" : "";
   return <span className={color}>{n.toFixed(2)}%</span>;
 }
@@ -11,6 +12,7 @@ function formatPerformancePercentage(v: EtfDetails[keyof EtfDetails]) {
 function formatPercentage(v: EtfDetails[keyof EtfDetails]) {
   if (v == null) return "-";
   const n = Number(v);
+  if (Number.isNaN(n)) return "-";
   return <span>{n.toFixed(2)}%</span>;
 }
 
