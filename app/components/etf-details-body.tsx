@@ -130,10 +130,13 @@ export default function EtfDetailsBody() {
           <td colSpan={COLUMN_CONFIG.length + 2} className="px-4 py-3">
             <button
               onClick={() => {
-                const loadedNames = results
-                  .filter((r) => r.data)
-                  .map((r) => r.data!.fundName);
-                comparisonChartRef.current?.open(isins, loadedNames);
+                const loaded = results
+                  .map((r, i) => ({ isin: isins[i], data: r.data }))
+                  .filter((r) => r.data);
+                comparisonChartRef.current?.open(
+                  loaded.map((r) => r.isin),
+                  loaded.map((r) => r.data!.fundName),
+                );
               }}
               className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors"
             >
