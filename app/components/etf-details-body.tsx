@@ -8,6 +8,8 @@ import { COLUMN_CONFIG } from "@/app/components/etf-column-config";
 import type { SearchableSelectOption } from "@/app/components/searchable-select";
 import PriceChartDialog from "@/app/components/price-chart-dialog";
 import type { PriceChartDialogHandle } from "@/app/components/price-chart-dialog";
+import ComparisonChartDialog from "@/app/components/comparison-chart-dialog";
+import type { ComparisonChartDialogHandle } from "@/app/components/comparison-chart-dialog";
 
 const WORD_LIMIT = 8;
 
@@ -39,6 +41,7 @@ export default function EtfDetailsBody() {
   const { isins, updateIsins } = useEtfIsins();
   const results = useMultipleEtfDetails(isins);
   const chartRef = useRef<PriceChartDialogHandle>(null);
+  const comparisonChartRef = useRef<ComparisonChartDialogHandle>(null);
 
   return (
     <tbody>
@@ -122,7 +125,33 @@ export default function EtfDetailsBody() {
           </tr>
         );
       })}
+      {isins.length >= 2 && (
+        <tr>
+          <td colSpan={COLUMN_CONFIG.length + 2} className="px-4 py-3">
+            <button
+              onClick={() => {
+                const loadedNames = results
+                  .filter((r) => r.data)
+                  .map((r) => r.data!.fundName);
+                comparisonChartRef.current?.open(isins, loadedNames);
+              }}
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="size-4"
+              >
+                <path d="M15.5 2A1.5 1.5 0 0 0 14 3.5v13a1.5 1.5 0 0 0 1.5 1.5h1a1.5 1.5 0 0 0 1.5-1.5v-13A1.5 1.5 0 0 0 16.5 2h-1ZM9.5 6A1.5 1.5 0 0 0 8 7.5v9A1.5 1.5 0 0 0 9.5 18h1a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 10.5 6h-1ZM3.5 10A1.5 1.5 0 0 0 2 11.5v5A1.5 1.5 0 0 0 3.5 18h1A1.5 1.5 0 0 0 6 16.5v-5A1.5 1.5 0 0 0 4.5 10h-1Z" />
+              </svg>
+              Compare Growth
+            </button>
+          </td>
+        </tr>
+      )}
       <PriceChartDialog ref={chartRef} />
+      <ComparisonChartDialog ref={comparisonChartRef} />
     </tbody>
   );
 }

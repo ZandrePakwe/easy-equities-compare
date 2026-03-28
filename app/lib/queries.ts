@@ -30,3 +30,12 @@ export function useEtfPrices(isin: string | null) {
     enabled: !!isin,
   });
 }
+
+export function useMultipleEtfPrices(isins: string[]) {
+  return useQueries({
+    queries: isins.map((isin) => ({
+      queryKey: ["etf-prices", isin],
+      queryFn: () => getEtfPrices(isin),
+    })),
+  });
+}
