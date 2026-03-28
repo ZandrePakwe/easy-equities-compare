@@ -77,7 +77,7 @@ const PriceChartDialog = forwardRef<PriceChartDialogHandle>(
     return createPortal(
       <dialog
         ref={dialogRef}
-        className="w-[calc(100%-2rem)] max-w-2xl rounded-xl border-none bg-white p-0 shadow-xl backdrop:bg-black/50"
+        className="m-auto w-[calc(100%-2rem)] max-w-2xl rounded-xl border-none bg-white p-0 shadow-xl backdrop:bg-black/50"
         onClick={(e) => {
           if (e.target === dialogRef.current) close();
         }}
