@@ -6,7 +6,7 @@ export default function EtfDetailsPreview() {
   return (
     <div className="flex w-full max-w-5xl flex-col gap-4 px-4 sm:px-0">
       <p className="text-sm text-zinc-500">
-        Use the search below to add up to 3 ETFs and compare key metrics such as
+        Use the search below to add ETFs and compare key metrics such as
         total expense ratio, annual returns, and fund size side by side.
       </p>
       <div className="rounded-lg border border-zinc-200 shadow-sm">
