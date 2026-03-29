@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import PriceChart from "@/app/components/price-chart";
 import { useEtfPrices } from "@/app/lib/queries";
 import { useMounted } from "@/app/lib/use-mounted";
+import { useScrollLock } from "@/app/lib/use-scroll-lock";
 import type { PricePoint } from "@/app/lib/queries";
 
 const TABS = [
@@ -52,6 +53,7 @@ const PriceChartDialog = forwardRef<PriceChartDialogHandle>(
     const [isin, setIsin] = useState<string | null>(null);
     const [fundName, setFundName] = useState("");
     const [activeTab, setActiveTab] = useState<Tab>(TABS[0]);
+    useScrollLock(isin !== null);
 
     const { data: prices, isLoading, isError } = useEtfPrices(isin);
 
@@ -135,7 +137,13 @@ const PriceChartDialog = forwardRef<PriceChartDialogHandle>(
           )}
 
           {isLoading && (
-            <div className="h-80 animate-pulse rounded bg-zinc-100" />
+            <div className="flex h-80 flex-col items-center justify-center gap-3">
+              <svg className="h-8 w-8 animate-spin text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+              </svg>
+              <p className="text-sm text-zinc-500">Fetching price data…</p>
+            </div>
           )}
           {isError && (
             <div className="flex h-80 items-center justify-center text-sm text-red-500">

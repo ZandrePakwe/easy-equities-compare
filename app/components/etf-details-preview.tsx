@@ -5,7 +5,7 @@ import EtfDetailsBody, { EtfDetailsFooter } from "@/app/components/etf-details-b
 export default function EtfDetailsPreview() {
   return (
     <div className="flex w-full max-w-5xl flex-col gap-4 px-4 sm:px-0">
-      <p className="text-sm text-zinc-500">
+      <p className="text-center text-sm text-zinc-500">
         Use the search below to add ETFs and compare key metrics such as
         total expense ratio, annual returns, and fund size side by side.
       </p>
