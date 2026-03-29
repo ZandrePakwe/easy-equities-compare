@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
@@ -124,7 +123,6 @@ export default function ComparisonChartDialog({
   names: string[];
 }) {
   const mounted = useMounted();
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const { isOpen, activeTab, close, setTab } = useComparisonDialog();
   useScrollLock(isOpen);
 
@@ -144,7 +142,6 @@ export default function ComparisonChartDialog({
     <>
       <div className="fixed inset-0 z-50 bg-black/50" onClick={close} />
       <dialog
-        ref={dialogRef}
         open
         className="fixed inset-0 z-50 m-auto w-[calc(100%-2rem)] max-w-3xl rounded-xl border-none bg-white p-0 shadow-xl"
       >
