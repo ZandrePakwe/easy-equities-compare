@@ -8,8 +8,7 @@ import { COLUMN_CONFIG } from "@/app/components/etf-column-config";
 import type { SearchableSelectOption } from "@/app/components/searchable-select";
 import PriceChartDialog from "@/app/components/price-chart-dialog";
 import type { PriceChartDialogHandle } from "@/app/components/price-chart-dialog";
-import ComparisonChartDialog from "@/app/components/comparison-chart-dialog";
-import type { ComparisonChartDialogHandle } from "@/app/components/comparison-chart-dialog";
+import ComparisonChartDialog, { useComparisonDialog } from "@/app/components/comparison-chart-dialog";
 
 const WORD_LIMIT = 8;
 
@@ -41,7 +40,7 @@ export default function EtfDetailsBody() {
   const { isins, updateIsins } = useEtfIsins();
   const results = useMultipleEtfDetails(isins);
   const chartRef = useRef<PriceChartDialogHandle>(null);
-  const comparisonChartRef = useRef<ComparisonChartDialogHandle>(null);
+  const { open: openComparison } = useComparisonDialog();
 
   return (
     <tbody>
@@ -129,15 +128,7 @@ export default function EtfDetailsBody() {
         <tr>
           <td colSpan={COLUMN_CONFIG.length + 2} className="px-4 py-3">
             <button
-              onClick={() => {
-                const loaded = results
-                  .map((r, i) => ({ isin: isins[i], data: r.data }))
-                  .filter((r) => r.data);
-                comparisonChartRef.current?.open(
-                  loaded.map((r) => r.isin),
-                  loaded.map((r) => r.data!.fundName),
-                );
-              }}
+              onClick={() => openComparison()}
               className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors"
             >
               <svg
@@ -154,7 +145,10 @@ export default function EtfDetailsBody() {
         </tr>
       )}
       <PriceChartDialog ref={chartRef} />
-      <ComparisonChartDialog ref={comparisonChartRef} />
+      <ComparisonChartDialog
+        isins={isins.filter((_, i) => results[i]?.data)}
+        names={results.filter((r) => r.data).map((r) => r.data!.fundName)}
+      />
     </tbody>
   );
 }
