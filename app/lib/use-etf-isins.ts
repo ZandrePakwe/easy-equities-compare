@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 /**
  * Manages the list of selected ETF ISINs via URL search params.
@@ -8,7 +8,6 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
  * Must be rendered inside a `<Suspense>` boundary because it uses `useSearchParams`.
  */
 export function useEtfIsins() {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -21,7 +20,8 @@ export function useEtfIsins() {
     } else {
       params.set("etfs", next.join(","));
     }
-    router.replace(`${pathname}?${params.toString()}`);
+    const qs = params.toString();
+    window.history.replaceState(null, "", qs ? `${pathname}?${qs}` : pathname);
   }
 
   return { isins, updateIsins };
