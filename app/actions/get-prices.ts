@@ -5,7 +5,7 @@ export type PricePoint = {
   price: number;
 };
 
-export async function getEtfPrices(isin: string): Promise<PricePoint[]> {
+export async function getPrices(isin: string): Promise<PricePoint[]> {
   const res = await fetch(
     `https://pricing.easyequities.co.za/api/prices?ISINCode=${encodeURIComponent(isin)}&period=0`,
   );
