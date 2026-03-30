@@ -93,21 +93,21 @@ export function useComparisonDialog() {
   const activeTab = (tabLabel && TAB_MAP.get(tabLabel)) ?? DEFAULT_TAB;
 
   function open() {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     params.set("compare", "true");
     params.set("compareTab", DEFAULT_TAB.label);
     router.replace(`${pathname}?${params.toString()}`);
   }
 
   function close() {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     params.delete("compare");
     params.delete("compareTab");
     router.replace(`${pathname}?${params.toString()}`);
   }
 
   function setTab(tab: Tab) {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     params.set("compareTab", tab.label);
     router.replace(`${pathname}?${params.toString()}`);
   }

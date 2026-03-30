@@ -15,7 +15,7 @@ export function useEtfIsins() {
   const isins = searchParams.get("etfs")?.split(",").filter(Boolean) ?? [];
 
   function updateIsins(next: string[]) {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     if (next.length === 0) {
       params.delete("etfs");
     } else {
