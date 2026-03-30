@@ -1,41 +1,44 @@
 import { useQuery, useQueries } from "@tanstack/react-query";
-import { getEtfOptions } from "@/app/actions/get-etf-options";
-import { getEtfDetails } from "@/app/actions/get-etf-details";
-import { getEtfPrices } from "@/app/actions/get-etf-prices";
+import { getOptions } from "@/app/actions/get-options";
+import { getDetails } from "@/app/actions/get-details";
+import { getPrices } from "@/app/actions/get-prices";
+import type { Source } from "@/app/actions/get-options";
 
-export type { EtfOption } from "@/app/actions/get-etf-options";
-export type { EtfDetails } from "@/app/actions/get-etf-details";
-export type { PricePoint } from "@/app/actions/get-etf-prices";
+export type { FundOption, Source } from "@/app/actions/get-options";
+export type { FundDetails } from "@/app/actions/get-details";
+export type { PricePoint } from "@/app/actions/get-prices";
 
-export function useEtfOptions(query?: string) {
+export function useOptions(query?: string) {
   return useQuery({
-    queryKey: ["etf-options", query],
-    queryFn: () => getEtfOptions(query),
+    queryKey: ["fund-options", query],
+    queryFn: () => getOptions(query),
   });
 }
 
-export function useMultipleEtfDetails(isins: string[]) {
+export function useMultipleDetails(
+  entries: { isin: string; source: Source }[],
+) {
   return useQueries({
-    queries: isins.map((isin) => ({
-      queryKey: ["etf-details", isin],
-      queryFn: () => getEtfDetails(isin),
+    queries: entries.map(({ isin, source }) => ({
+      queryKey: ["fund-details", isin, source],
+      queryFn: () => getDetails(isin, source),
     })),
   });
 }
 
-export function useEtfPrices(isin: string | null) {
+export function usePrices(isin: string | null) {
   return useQuery({
-    queryKey: ["etf-prices", isin],
-    queryFn: () => getEtfPrices(isin!),
+    queryKey: ["fund-prices", isin],
+    queryFn: () => getPrices(isin!),
     enabled: !!isin,
   });
 }
 
-export function useMultipleEtfPrices(isins: string[]) {
+export function useMultiplePrices(isins: string[]) {
   return useQueries({
     queries: isins.map((isin) => ({
-      queryKey: ["etf-prices", isin],
-      queryFn: () => getEtfPrices(isin),
+      queryKey: ["fund-prices", isin],
+      queryFn: () => getPrices(isin),
     })),
   });
 }

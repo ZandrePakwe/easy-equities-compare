@@ -3,7 +3,7 @@
 import { useRef, useState, useImperativeHandle, forwardRef } from "react";
 import { createPortal } from "react-dom";
 import PriceChart from "@/app/components/price-chart";
-import { useEtfPrices } from "@/app/lib/queries";
+import { usePrices } from "@/app/lib/queries";
 import { useMounted } from "@/app/lib/use-mounted";
 import { useScrollLock } from "@/app/lib/use-scroll-lock";
 import type { PricePoint } from "@/app/lib/queries";
@@ -55,7 +55,7 @@ const PriceChartDialog = forwardRef<PriceChartDialogHandle>(
     const [activeTab, setActiveTab] = useState<Tab>(TABS[0]);
     useScrollLock(isin !== null);
 
-    const { data: prices, isLoading, isError } = useEtfPrices(isin);
+    const { data: prices, isLoading, isError } = usePrices(isin);
 
     useImperativeHandle(ref, () => ({
       open(newIsin: string, newFundName: string) {

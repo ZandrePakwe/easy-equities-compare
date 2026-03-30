@@ -1,13 +1,13 @@
 import { Suspense } from "react";
-import { COLUMN_CONFIG } from "@/app/components/etf-column-config";
-import EtfDetailsBody, { EtfDetailsFooter } from "@/app/components/etf-details-body";
+import { COLUMN_CONFIG } from "@/app/components/column-config";
+import DetailsBody, { DetailsFooter } from "@/app/components/details-body";
 
-export default function EtfDetailsPreview() {
+export default function DetailsPreview() {
   return (
     <div className="flex w-full max-w-5xl flex-col gap-4 px-4 sm:px-0">
       <p className="text-center text-sm text-zinc-500">
-        Use the search below to add ETFs and compare key metrics such as
-        total expense ratio, annual returns, and fund size side by side.
+        Use the search below to add ETFs or unit trusts and compare key metrics
+        such as total expense ratio, annual returns, and fund size side by side.
       </p>
       <div className="rounded-lg border border-zinc-200 shadow-sm">
         <div className="relative p-2 sm:p-4">
@@ -52,7 +52,7 @@ export default function EtfDetailsPreview() {
                 </tbody>
               }
             >
-              <EtfDetailsBody />
+              <DetailsBody />
             </Suspense>
           </table>
           </div>
@@ -65,7 +65,7 @@ export default function EtfDetailsPreview() {
             </div>
           }
         >
-          <EtfDetailsFooter />
+          <DetailsFooter />
         </Suspense>
       </div>
     </div>

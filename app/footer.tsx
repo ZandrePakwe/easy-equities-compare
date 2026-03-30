@@ -27,7 +27,7 @@ export default function Footer() {
               />
             </Link>
             <p className="text-sm leading-relaxed text-white/70">
-              Compare ETFs side by side and make your investment choice #Easier.
+              Compare Funds side by side and make your investment choice #Easier.
             </p>
           </div>
 

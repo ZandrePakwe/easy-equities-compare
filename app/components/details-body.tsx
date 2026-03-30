@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useRef } from "react";
-import EtfSelect from "@/app/components/etf-select";
-import { useEtfIsins } from "@/app/lib/use-etf-isins";
-import { useMultipleEtfDetails } from "@/app/lib/queries";
-import { COLUMN_CONFIG } from "@/app/components/etf-column-config";
-import type { SearchableSelectOption } from "@/app/components/searchable-select";
+import FundSelect from "@/app/components/fund-select";
+import { useFundIsins } from "@/app/lib/use-fund-isins";
+import type { FundEntry } from "@/app/lib/use-fund-isins";
+import { useMultipleDetails } from "@/app/lib/queries";
+import type { Source } from "@/app/lib/queries";
+import { COLUMN_CONFIG } from "@/app/components/column-config";
 import PriceChartDialog from "@/app/components/price-chart-dialog";
 import type { PriceChartDialogHandle } from "@/app/components/price-chart-dialog";
 import ComparisonChartDialog, { useComparisonDialog } from "@/app/components/comparison-chart-dialog";
@@ -36,9 +37,9 @@ function ExpandableDescription({ text }: { text: string }) {
   );
 }
 
-export default function EtfDetailsBody() {
-  const { isins, updateIsins } = useEtfIsins();
-  const results = useMultipleEtfDetails(isins);
+export default function DetailsBody() {
+  const { funds, updateFunds } = useFundIsins();
+  const results = useMultipleDetails(funds);
   const chartRef = useRef<PriceChartDialogHandle>(null);
   const { open: openComparison } = useComparisonDialog();
 
@@ -48,21 +49,21 @@ export default function EtfDetailsBody() {
         <tr>
           <td colSpan={COLUMN_CONFIG.length + 2} className="px-4 py-2">
             <p className="text-sm text-red-500">
-              Failed to load some ETF details.
+              Failed to load some fund details.
             </p>
           </td>
         </tr>
       )}
-      {isins.map((isin, i) => {
+      {funds.map((fund, i) => {
         const r = results[i];
         if (!r?.data) {
           return (
-            <tr key={isin} className="border-b border-zinc-100">
+            <tr key={fund.isin} className="border-b border-zinc-100">
               <td className="sticky left-0 z-10 bg-white px-4 py-2">
                 <div className="flex items-start gap-1">
                   <div className="h-4 w-32 animate-pulse rounded bg-zinc-200" />
                   <button
-                    onClick={() => updateIsins(isins.filter((v) => v !== isin))}
+                    onClick={() => updateFunds(funds.filter((v) => v.isin !== fund.isin))}
                     className="shrink-0 rounded-full bg-zinc-100 p-2 text-sm leading-none text-zinc-400 hover:text-zinc-700 sm:bg-transparent sm:hover:bg-zinc-100"
                   >
                     &times;
@@ -81,14 +82,14 @@ export default function EtfDetailsBody() {
           );
         }
         return (
-          <tr key={isin} className="border-b border-zinc-100">
+          <tr key={fund.isin} className="border-b border-zinc-100">
             <td className="sticky left-0 max-w-[25vw] bg-white px-4 py-2 font-semibold wrap-break-word whitespace-normal text-zinc-800 sm:max-w-50">
               <div className="flex items-start gap-2">
                 <span className="flex-1">{r.data.fundName}</span>
                 <div className="flex shrink-0 flex-col-reverse items-center gap-1 sm:flex-row sm:gap-2">
                   <button
                     onClick={() =>
-                      chartRef.current?.open(isin, r.data.fundName)
+                      chartRef.current?.open(fund.isin, r.data.fundName)
                     }
                     className="hover:text-accent rounded-full bg-zinc-100 p-2 text-zinc-400 sm:bg-transparent sm:hover:bg-zinc-100"
                     aria-label="View price trend"
@@ -107,7 +108,7 @@ export default function EtfDetailsBody() {
                     </svg>
                   </button>
                   <button
-                    onClick={() => updateIsins(isins.filter((v) => v !== isin))}
+                    onClick={() => updateFunds(funds.filter((v) => v.isin !== fund.isin))}
                     className="rounded-full bg-zinc-100 p-2 text-sm leading-none text-zinc-400 hover:text-zinc-700 sm:bg-transparent sm:hover:bg-zinc-100"
                   >
                     &times;
@@ -124,7 +125,7 @@ export default function EtfDetailsBody() {
           </tr>
         );
       })}
-      {isins.length >= 2 && (
+      {funds.length >= 2 && (
         <tr>
           <td colSpan={COLUMN_CONFIG.length + 2} className="px-4 py-3">
             <button
@@ -146,26 +147,25 @@ export default function EtfDetailsBody() {
       )}
       <PriceChartDialog ref={chartRef} />
       <ComparisonChartDialog
-        isins={isins.filter((_, i) => results[i]?.data)}
+        isins={funds.filter((_, i) => results[i]?.data).map((f) => f.isin)}
         names={results.filter((r) => r.data).map((r) => r.data!.fundName)}
       />
     </tbody>
   );
 }
 
-export function EtfDetailsFooter() {
-  const { isins, updateIsins } = useEtfIsins();
+export function DetailsFooter() {
+  const { funds, updateFunds } = useFundIsins();
 
-  function handleSelect(option: SearchableSelectOption | null) {
-    if (!option) return;
-    if (isins.includes(option.value)) return;
-    updateIsins([...isins, option.value]);
+  function handleSelect(isin: string, source: Source) {
+    if (funds.some((f) => f.isin === isin)) return;
+    updateFunds([...funds, { isin, source }]);
   }
 
   return (
     <div className="border-t border-zinc-200 px-4 py-2">
       <div className="w-full max-w-80">
-        <EtfSelect onChange={handleSelect} excludeIsins={isins} />
+        <FundSelect onChange={handleSelect} excludeIsins={funds.map((f) => f.isin)} />
       </div>
     </div>
   );

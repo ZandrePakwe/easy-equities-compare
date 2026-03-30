@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
-import type { EtfDetails } from "@/app/lib/queries";
+import type { FundDetails } from "@/app/lib/queries";
 
-function formatPerformancePercentage(v: EtfDetails[keyof EtfDetails]) {
+function formatPerformancePercentage(v: FundDetails[keyof FundDetails]) {
   if (v == null) return "-";
   const n = Number(v);
   if (Number.isNaN(n)) return "-";
@@ -9,7 +9,7 @@ function formatPerformancePercentage(v: EtfDetails[keyof EtfDetails]) {
   return <span className={color}>{n.toFixed(2)}%</span>;
 }
 
-function formatPercentage(v: EtfDetails[keyof EtfDetails]) {
+function formatPercentage(v: FundDetails[keyof FundDetails]) {
   if (v == null) return "-";
   const n = Number(v);
   if (Number.isNaN(n)) return "-";
@@ -17,9 +17,9 @@ function formatPercentage(v: EtfDetails[keyof EtfDetails]) {
 }
 
 export const COLUMN_CONFIG: {
-  key: keyof EtfDetails;
+  key: keyof FundDetails;
   label: string;
-  format: (v: EtfDetails[keyof EtfDetails]) => ReactNode;
+  format: (v: FundDetails[keyof FundDetails]) => ReactNode;
 }[] = [
   { key: "assetType", label: "Asset Type", format: (v) => String(v) },
   {

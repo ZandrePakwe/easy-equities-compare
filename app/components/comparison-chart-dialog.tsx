@@ -11,7 +11,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { useMultipleEtfPrices } from "@/app/lib/queries";
+import { useMultiplePrices } from "@/app/lib/queries";
 import { useMounted } from "@/app/lib/use-mounted";
 import { useScrollLock } from "@/app/lib/use-scroll-lock";
 import type { PricePoint } from "@/app/lib/queries";
@@ -92,14 +92,14 @@ export function useComparisonDialog() {
   const activeTab = (tabLabel && TAB_MAP.get(tabLabel)) ?? DEFAULT_TAB;
 
   function open() {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     params.set("compare", "true");
     params.set("compareTab", DEFAULT_TAB.label);
     window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   }
 
   function close() {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     params.delete("compare");
     params.delete("compareTab");
     const qs = params.toString();
@@ -107,7 +107,7 @@ export function useComparisonDialog() {
   }
 
   function setTab(tab: Tab) {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     params.set("compareTab", tab.label);
     window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   }
@@ -126,7 +126,7 @@ export default function ComparisonChartDialog({
   const { isOpen, activeTab, close, setTab } = useComparisonDialog();
   useScrollLock(isOpen);
 
-  const results = useMultipleEtfPrices(isins);
+  const results = useMultiplePrices(isins);
   const isLoading = results.some((r) => r.isLoading);
   const isError = results.some((r) => r.isError);
   const allLoaded = results.every((r) => r.data);
