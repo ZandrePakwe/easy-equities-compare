@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
   ResponsiveContainer,
@@ -84,7 +84,6 @@ function normaliseAndMerge(
 }
 
 export function useComparisonDialog() {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -93,23 +92,24 @@ export function useComparisonDialog() {
   const activeTab = (tabLabel && TAB_MAP.get(tabLabel)) ?? DEFAULT_TAB;
 
   function open() {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(searchParams.toString());
     params.set("compare", "true");
     params.set("compareTab", DEFAULT_TAB.label);
-    router.replace(`${pathname}?${params.toString()}`);
+    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   }
 
   function close() {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(searchParams.toString());
     params.delete("compare");
     params.delete("compareTab");
-    router.replace(`${pathname}?${params.toString()}`);
+    const qs = params.toString();
+    window.history.replaceState(null, "", qs ? `${pathname}?${qs}` : pathname);
   }
 
   function setTab(tab: Tab) {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(searchParams.toString());
     params.set("compareTab", tab.label);
-    router.replace(`${pathname}?${params.toString()}`);
+    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   }
 
   return { isOpen, activeTab, open, close, setTab };
