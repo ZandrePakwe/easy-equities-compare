@@ -23,6 +23,7 @@ const TABS = [
   { label: "1Y", days: 365 },
   { label: "3Y", days: 365 * 3 },
   { label: "5Y", days: 365 * 5 },
+  { label: "Max", days: null },
 ] as const;
 
 type Tab = (typeof TABS)[number];
@@ -40,7 +41,13 @@ const LINE_COLORS = [
   "#e8175d",
 ];
 
-function filterPrices(prices: PricePoint[], tab: Tab): PricePoint[] {
+function filterPrices(
+  prices: PricePoint[],
+  tab: Tab,
+  customStart: string | null,
+): PricePoint[] {
+  if (customStart) return prices.filter((p) => p.date >= customStart);
+  if (tab.days === null) return prices;
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - tab.days);
   const cutoffStr = cutoff.toISOString().split("T")[0];
@@ -90,11 +97,13 @@ export function useComparisonDialog() {
   const isOpen = searchParams.get("compare") === "true";
   const tabLabel = searchParams.get("compareTab") as TabLabel | null;
   const activeTab = (tabLabel && TAB_MAP.get(tabLabel)) ?? DEFAULT_TAB;
+  const customStart = searchParams.get("compareFrom");
 
   function open() {
     const params = new URLSearchParams(window.location.search);
     params.set("compare", "true");
     params.set("compareTab", DEFAULT_TAB.label);
+    params.delete("compareFrom");
     window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   }
 
@@ -102,6 +111,7 @@ export function useComparisonDialog() {
     const params = new URLSearchParams(window.location.search);
     params.delete("compare");
     params.delete("compareTab");
+    params.delete("compareFrom");
     const qs = params.toString();
     window.history.replaceState(null, "", qs ? `${pathname}?${qs}` : pathname);
   }
@@ -109,10 +119,26 @@ export function useComparisonDialog() {
   function setTab(tab: Tab) {
     const params = new URLSearchParams(window.location.search);
     params.set("compareTab", tab.label);
+    params.delete("compareFrom");
     window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   }
 
-  return { isOpen, activeTab, open, close, setTab };
+  function setCustomStart(date: string) {
+    const params = new URLSearchParams(window.location.search);
+    params.set("compareFrom", date);
+    params.set("compareTab", "");
+    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
+  }
+
+  return {
+    isOpen,
+    activeTab,
+    customStart,
+    open,
+    close,
+    setTab,
+    setCustomStart,
+  };
 }
 
 export default function ComparisonChartDialog({
@@ -123,7 +149,8 @@ export default function ComparisonChartDialog({
   names: string[];
 }) {
   const mounted = useMounted();
-  const { isOpen, activeTab, close, setTab } = useComparisonDialog();
+  const { isOpen, activeTab, customStart, close, setTab, setCustomStart } =
+    useComparisonDialog();
   useScrollLock(isOpen);
 
   const results = useMultiplePrices(isins);
@@ -132,7 +159,7 @@ export default function ComparisonChartDialog({
   const allLoaded = results.every((r) => r.data);
 
   const filteredAll = allLoaded
-    ? results.map((r) => filterPrices(r.data!, activeTab))
+    ? results.map((r) => filterPrices(r.data!, activeTab, customStart))
     : [];
   const chartData = allLoaded ? normaliseAndMerge(filteredAll, names) : [];
 
@@ -146,104 +173,134 @@ export default function ComparisonChartDialog({
         className="fixed inset-0 z-50 m-auto w-[calc(100%-2rem)] max-w-3xl rounded-xl border-none bg-white p-0 shadow-xl"
       >
         <div className="flex flex-col gap-4 p-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-zinc-800">
-            Growth Comparison
-          </h2>
-          <button
-            onClick={close}
-            className="rounded-full bg-zinc-100 p-2 text-sm leading-none text-zinc-400 sm:bg-transparent sm:hover:bg-zinc-100 hover:text-zinc-700"
-          >
-            &times;
-          </button>
-        </div>
-
-        <div className="flex gap-2 overflow-x-auto">
-          {TABS.map((tab) => (
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-zinc-800">
+              Growth Comparison
+            </h2>
             <button
-              key={tab.label}
-              onClick={() => setTab(tab)}
-              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                activeTab === tab
-                  ? "bg-primary text-white"
-                  : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
-              }`}
+              onClick={close}
+              className="rounded-full bg-zinc-100 p-2 text-sm leading-none text-zinc-400 hover:text-zinc-700 sm:bg-transparent sm:hover:bg-zinc-100"
             >
-              {tab.label}
+              &times;
             </button>
-          ))}
-        </div>
+          </div>
 
-        {isLoading && (
-          <div className="flex h-80 flex-col items-center justify-center gap-3">
-            <svg className="h-8 w-8 animate-spin text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-            </svg>
-            <p className="text-sm text-zinc-500">Fetching comparison data…</p>
+          <div className="flex flex-wrap items-center gap-2">
+            {TABS.map((tab) => (
+              <button
+                key={tab.label}
+                onClick={() => setTab(tab)}
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                  activeTab === tab && !customStart
+                    ? "bg-primary text-white"
+                    : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+            <span className="mx-1 text-xs text-zinc-400">|</span>
+            <label className="flex items-center gap-1.5 text-sm text-zinc-600">
+              From
+              <input
+                type="date"
+                value={customStart ?? ""}
+                onChange={(e) => {
+                  if (e.target.value) setCustomStart(e.target.value);
+                }}
+                className={`rounded-md border px-2 py-1 text-sm ${
+                  customStart
+                    ? "border-primary bg-primary/5 text-primary"
+                    : "border-zinc-200 text-zinc-600"
+                }`}
+              />
+            </label>
           </div>
-        )}
-        {isError && (
-          <div className="flex h-80 items-center justify-center text-sm text-red-500">
-            Failed to load price data
-          </div>
-        )}
-        {!isLoading && !isError && chartData.length === 0 && (
-          <div className="flex h-80 items-center justify-center text-sm text-zinc-400">
-            No price data available for this period
-          </div>
-        )}
-        {!isLoading && !isError && chartData.length > 0 && (
-          <div className="h-80 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <XAxis
-                  dataKey="date"
-                  tick={{ fontSize: 12, fill: "#71717a" }}
-                  tickLine={false}
-                  axisLine={false}
-                  minTickGap={40}
+
+          {isLoading && (
+            <div className="flex h-80 flex-col items-center justify-center gap-3">
+              <svg
+                className="text-primary h-8 w-8 animate-spin"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
                 />
-                <YAxis
-                  tick={{ fontSize: 12, fill: "#71717a" }}
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={(v: number) => `${v.toFixed(0)}%`}
-                  width={50}
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
                 />
-                <Tooltip
-                  formatter={(value, name) => [
-                    `${Number(value) >= 0 ? "+" : ""}${Number(value).toFixed(2)}%`,
-                    String(name),
-                  ]}
-                  labelStyle={{ color: "#71717a" }}
-                  contentStyle={{
-                    borderRadius: "0.5rem",
-                    border: "1px solid #e4e4e7",
-                    fontSize: "0.875rem",
-                  }}
-                />
-                <Legend
-                  wrapperStyle={{ fontSize: "0.75rem" }}
-                />
-                {names.map((name, i) => (
-                  <Line
-                    key={name}
-                    type="monotone"
-                    dataKey={name}
-                    stroke={LINE_COLORS[i % LINE_COLORS.length]}
-                    strokeWidth={2}
-                    dot={false}
-                    activeDot={{ r: 4 }}
-                    connectNulls
+              </svg>
+              <p className="text-sm text-zinc-500">Fetching comparison data…</p>
+            </div>
+          )}
+          {isError && (
+            <div className="flex h-80 items-center justify-center text-sm text-red-500">
+              Failed to load price data
+            </div>
+          )}
+          {!isLoading && !isError && chartData.length === 0 && (
+            <div className="flex h-80 items-center justify-center text-sm text-zinc-400">
+              No price data available for this period
+            </div>
+          )}
+          {!isLoading && !isError && chartData.length > 0 && (
+            <div className="h-80 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData}>
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 12, fill: "#71717a" }}
+                    tickLine={false}
+                    axisLine={false}
+                    minTickGap={40}
                   />
-                ))}
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-      </div>
-    </dialog>
+                  <YAxis
+                    tick={{ fontSize: 12, fill: "#71717a" }}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(v: number) => `${v.toFixed(0)}%`}
+                    width={50}
+                  />
+                  <Tooltip
+                    formatter={(value, name) => [
+                      `${Number(value) >= 0 ? "+" : ""}${Number(value).toFixed(2)}%`,
+                      String(name).split(" ")[0].substring(0, 15),
+                    ]}
+                    labelStyle={{ color: "#71717a" }}
+                    contentStyle={{
+                      borderRadius: "0.5rem",
+                      border: "1px solid #e4e4e7",
+                      fontSize: "0.875rem",
+                    }}
+                  />
+                  <Legend wrapperStyle={{ fontSize: "0.75rem" }} />
+                  {names.map((name, i) => (
+                    <Line
+                      key={name}
+                      type="monotone"
+                      dataKey={name}
+                      stroke={LINE_COLORS[i % LINE_COLORS.length]}
+                      strokeWidth={2}
+                      dot={false}
+                      activeDot={{ r: 4 }}
+                      connectNulls
+                    />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </div>
+      </dialog>
     </>,
     document.body,
   );
